@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Dungeon Master Help</title>
+</head>
+<body>
+  <!-- Charakter-Container (links) -->
+  <div id="character-container" data-type="Charakter" data-counter="2">
+    <div class="character">
+      <h3>Charakter 1</h3>
+      <p>Kurze Beschreibung oder weitere Infos zu Charakter 1.</p>
+    </div>
+    <div class="character">
+      <h3>Charakter 2</h3>
+      <p>Weitere spannende Informationen zu Charakter 2.</p>
+    </div>
+    <!-- Button: erscheint beim Hover unten rechts -->
+    <button class="add-button" id="add-character-btn">+</button>
+    <button class="delete-button" id="delete-character-btn">-</button>
+  </div>
+
+  <!-- NPC-Container (rechts) -->
+  <div id="npc-container" data-type="NPC" data-counter="2">
+    <div class="character">
+      <h3>NPC 1</h3>
+      <p>Kurze Beschreibung oder weitere Infos zu NPC 1.</p>
+    </div>
+    <div class="character">
+      <h3>NPC 2</h3>
+      <p>Weitere spannende Informationen zu NPC 2.</p>
+    </div>
+    <!-- Button: erscheint beim Hover unten links -->
+    <button class="add-button" id="add-npc-btn">+</button>
+    <button class="delete-button " id="delete-npc-btn">-</button>
+  </div>
+
+  <script src="functions.js"></script>
+</body>
+</html>

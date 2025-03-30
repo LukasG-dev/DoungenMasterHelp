@@ -1,0 +1,133 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: rgba(21, 24, 24, 0.753);
+  }
+  
+  /* Scrollleisten ausblenden */
+  /* Chrome, Safari, Opera */
+  #character-container::-webkit-scrollbar,
+  #npc-container::-webkit-scrollbar {
+    display: none;
+  }
+  /* IE, Edge & Firefox */
+  #character-container, #npc-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Charakter-Container (links) */
+  #character-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    max-height: 100vh;
+    overflow-y: auto;
+    background-color: rgba(19, 18, 18, 0.884);
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #c4c3ae;
+    border: 2px solid #000;
+    border-radius: 5px;
+    position: fixed;
+  }
+  
+  /* NPC-Container (rechts) */
+  #npc-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    max-height: 100vh;
+    overflow-y: auto;
+    background-color: rgba(19, 18, 18, 0.884);
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #c4c3ae;
+    border: 2px solid #000;
+    border-radius: 5px;
+  }
+  
+  /* Stil für einzelne Charakter-Infos */
+  .character {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .character h3 {
+    margin: 0 0 5px 0;
+  }
+  
+  .character p {
+    margin: 0;
+  }
+  
+  /* Plus-Button: standardmäßig unsichtbar, erscheint beim Hover */
+  .add-button {
+    background-color: #136d16;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    opacity: 0;
+    position: absolute;
+  }
+  
+  /* Positionierung der Buttons in den jeweiligen Containern */
+  #character-container .add-button {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  #npc-container .add-button {
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  /* Beim Hover über den Container wird der Button sichtbar */
+  #character-container:hover .add-button,
+  #npc-container:hover .add-button {
+    opacity: 1;
+  }
+  /* delete-Button: standardmäßig unsichtbar, erscheint beim Hover */
+  .delete-button {
+    background-color: #7c0b0b;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    opacity: 0;
+    position: absolute;
+  }
+  
+  /* Positionierung der Buttons in den jeweiligen Containern */
+  #character-container .delete-button {
+    bottom: 10px;
+    right: 40px;
+  }
+  
+  #npc-container .delete-button {
+    bottom: 10px;
+    left: 40px;
+  }
+  
+  /* Beim Hover über den Container wird der Button sichtbar */
+  #character-container:hover .delete-button,
+  #npc-container:hover .delete-button {
+    opacity: 1;
+  }
+  
