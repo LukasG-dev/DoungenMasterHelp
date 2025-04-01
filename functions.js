@@ -15,6 +15,7 @@ function addNewEntry(container) {
 
   // Neues Element erstellen
   const newElement = document.createElement('div');
+  
   newElement.className = 'character';
 
   // Überschrift erstellen
@@ -44,7 +45,7 @@ document.getElementById('add-npc-btn').addEventListener('click', function() {
   addNewEntry(container);
 });
 
-// Entferne einen charakter aus dem Charakter oder dem Npc container.
+// Entferne einen Charakter aus dem Charakter oder dem Npc container.
 
 function deleteEntry(container){
     // character or Npc
