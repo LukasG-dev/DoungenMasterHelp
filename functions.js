@@ -1,128 +1,298 @@
 "use strict";
 
-/**
- * Fügt einen neuen Eintrag (Charakter/NPC) in den übergebenen Container ein.
- * Der Container muss über die data-Attribute "data-type" (z. B. "Charakter" oder "NPC")
- * und "data-counter" (Anfangszähler, z. B. "2") verfügen.
- */
+// ============================== Basisfunktionen ==============================
+
 function createDeleteButton(parentElement) {
   const deleteBtn = document.createElement('button');
   deleteBtn.className = 'delete-button';
   deleteBtn.textContent = '-';
-  deleteBtn.addEventListener('click', function () {
-    parentElement.remove();
-  });
+  deleteBtn.addEventListener('click', () => parentElement.remove());
   return deleteBtn;
 }
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// ============================== Charakter & NPC ==============================
 
 function addNewEntry(container) {
   const type = container.dataset.type;
   let count = parseInt(container.dataset.counter, 10) || 0;
-  count++;
-  container.dataset.counter = count;
+  container.dataset.counter = ++count;
 
   const newElement = document.createElement('div');
-  newElement.className = 'character';
+  newElement.classList.add('character', 'field');
 
-  const header = document.createElement('h3');
-  header.textContent = `${type} ${count}`;
-  newElement.appendChild(header);
+  const charakter = {
+    name: `${type} ${count}`,
+    klasse: "Krieger",
+    rasse: "Mensch",
+    level: 1,
+    bewegung: 30,
+    ac: 10,
+    hp: { aktuell: 12, max: 12 },
+    attribute: {
+      staerke: 12,
+      geschicklichkeit: 10,
+      konstitution: 11,
+      intelligenz: 8,
+      weisheit: 9,
+      charisma: 13
+    },
+    beschreibung: `Beschreibung zu ${type} ${count}`
+  };
 
-  const para = document.createElement('p');
-  para.textContent = `Neue spannende Informationen zu ${type} ${count}.`;
-  newElement.appendChild(para);
+  newElement.innerHTML = `
+    <h3>${charakter.name}</h3>
+    <p><strong>Klasse:</strong> ${charakter.klasse}</p>
+    <p><strong>Rasse:</strong> ${charakter.rasse}</p>
+    <p><strong>Level:</strong> ${charakter.level}</p>
+    <p><strong>Bewegung:</strong> ${charakter.bewegung} ft</p>
+    <p><strong>Rüstungsklasse:</strong> ${charakter.ac}</p>
+    <p><strong>HP:</strong> ${charakter.hp.aktuell} / ${charakter.hp.max}</p>
+    <p><strong>Attribute:</strong></p>
+    <ul class="attribute-list">
+      <li>Stärke: ${charakter.attribute.staerke}</li>
+      <li>Geschicklichkeit: ${charakter.attribute.geschicklichkeit}</li>
+      <li>Konstitution: ${charakter.attribute.konstitution}</li>
+      <li>Intelligenz: ${charakter.attribute.intelligenz}</li>
+      <li>Weisheit: ${charakter.attribute.weisheit}</li>
+      <li>Charisma: ${charakter.attribute.charisma}</li>
+    </ul>
+    <p><strong>Beschreibung:</strong> ${charakter.beschreibung}</p>
+  `;
 
-  // Statt doppeltem Code:
-  newElement.appendChild(createDeleteButton(newElement));
   newElement.appendChild(createEditButton(newElement));
+  newElement.appendChild(createDeleteButton(newElement));
 
-
-  const addButton = container.querySelector('.add-button');
+  const addButton = container.querySelector('.add-entry-block');
   container.insertBefore(newElement, addButton);
 }
 
-
-// Event Listener für beide Buttons
-document.getElementById('add-character-btn').addEventListener('click', function() {
-  const container = document.getElementById('character-container');
-  addNewEntry(container);
-});
-
-document.getElementById('add-npc-btn').addEventListener('click', function() {
-  const container = document.getElementById('npc-container');
-  addNewEntry(container);
-});
-
-// Entferne einen Charakter aus dem Charakter oder dem Npc container.
-/**
- * Fügt allen bestehenden Charakteren/NPCs einen Löschbutton hinzu.
- */
-function initializeActionButtons(container) {
-  const entries = container.querySelectorAll('.character');
-  entries.forEach(entry => {
-    if (!entry.querySelector('.delete-button')) {
-      entry.appendChild(createDeleteButton(entry));
-    }
-    if (!entry.querySelector('.edit-button')) {
-      entry.appendChild(createEditButton(entry));
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  initializeActionButtons(document.getElementById('character-container'));
-  initializeActionButtons(document.getElementById('npc-container'));
-});
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  initializeDeleteButtons(document.getElementById('character-container'));
-  initializeDeleteButtons(document.getElementById('npc-container'));
-});
-
-// charaktere bearbeiten
 function createEditButton(parentElement) {
   const editBtn = document.createElement('button');
   editBtn.className = 'edit-button';
   editBtn.textContent = 'Bearbeiten';
 
-  editBtn.addEventListener('click', function () {
+  editBtn.addEventListener('click', () => {
     const isEditing = parentElement.classList.toggle('editing');
-    const h3 = parentElement.querySelector('h3');
-    const p = parentElement.querySelector('p');
 
     if (isEditing) {
-      // Wechsle zu Edit-Modus
-      const nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.value = h3.textContent;
-      nameInput.className = 'edit-input';
-
-      const descInput = document.createElement('textarea');
-      descInput.value = p.textContent;
-      descInput.className = 'edit-textarea';
-
-      h3.replaceWith(nameInput);
-      p.replaceWith(descInput);
-
       editBtn.textContent = 'Speichern';
+      const replacements = [];
+
+      parentElement.querySelectorAll('p, ul').forEach(element => {
+        const strong = element.querySelector('strong');
+        const label = strong ? strong.textContent.replace(':', '').trim() : '';
+        let newEl;
+
+        if (label === "HP") {
+          const [aktuell, max] = element.textContent.match(/\d+/g) || [0, 0];
+          newEl = document.createElement('div');
+          newEl.innerHTML = `
+            <label>HP:</label>
+            <input type="number" class="edit-hp-aktuell" value="${aktuell}" style="width: 60px;"> /
+            <input type="number" class="edit-hp-max" value="${max}" style="width: 60px;">
+          `;
+        }
+        else if (label === "Attribute" || element.classList.contains("attribute-list")) {
+          const attrInputs = document.createElement('div');
+          element.querySelectorAll('li').forEach(li => {
+            const [attr, val] = li.textContent.split(':').map(s => s.trim());
+            attrInputs.innerHTML += `
+              <label>${attr}:</label>
+              <input type="number" class="edit-attr" data-attr="${attr.toLowerCase()}" value="${val}" style="width: 60px;"><br>
+            `;
+          });
+          newEl = attrInputs;
+        }
+        else if (label) {
+          const value = element.textContent.replace(strong.textContent, '').trim();
+          newEl = document.createElement('div');
+          newEl.innerHTML = `
+            <label>${label}:</label>
+            <input type="${isNaN(value) ? 'text' : 'number'}" class="edit-generic" data-label="${label}" value="${value}">
+          `;
+        }
+
+        replacements.push({ old: element, new: newEl });
+      });
+
+      replacements.forEach(({ old, new: newEl }) => old.replaceWith(newEl));
+
     } else {
-      // Speichern und zurückwechseln
-      const nameInput = parentElement.querySelector('input.edit-input');
-      const descInput = parentElement.querySelector('textarea.edit-textarea');
+      editBtn.textContent = 'Bearbeiten';
+      const values = { generic: {}, attribute: {}, hp: {} };
 
-      const newH3 = document.createElement('h3');
-      newH3.textContent = nameInput.value;
+      values.generic["Name"] = parentElement.querySelector('h3')?.textContent || "Unbenannt";
+      parentElement.querySelectorAll('input.edit-generic').forEach(input => {
+        const label = input.dataset.label?.trim();
+        if (label) values.generic[label] = input.value;
+      });
+      parentElement.querySelectorAll('input.edit-attr').forEach(input => {
+        const attr = input.dataset.attr;
+        values.attribute[attr] = input.value;
+      });
+      values.hp.aktuell = parentElement.querySelector('.edit-hp-aktuell')?.value || 0;
+      values.hp.max = parentElement.querySelector('.edit-hp-max')?.value || 0;
 
-      const newP = document.createElement('p');
-      newP.textContent = descInput.value;
+      const attrList = Object.entries(values.attribute)
+        .map(([key, val]) => `<li>${capitalize(key)}: ${val}</li>`).join("");
 
-      nameInput.replaceWith(newH3);
-      descInput.replaceWith(newP);
+      parentElement.innerHTML = `
+        <h3>${values.generic["Name"]}</h3>
+        <p><strong>Klasse:</strong> ${values.generic["Klasse"]}</p>
+        <p><strong>Rasse:</strong> ${values.generic["Rasse"]}</p>
+        <p><strong>Level:</strong> ${values.generic["Level"]}</p>
+        <p><strong>Bewegung:</strong> ${values.generic["Bewegung"]} ft</p>
+        <p><strong>Rüstungsklasse:</strong> ${values.generic["Rüstungsklasse"]}</p>
+        <p><strong>HP:</strong> ${values.hp.aktuell} / ${values.hp.max}</p>
+        <p><strong>Attribute:</strong></p>
+        <ul class="attribute-list">${attrList}</ul>
+        <p><strong>Beschreibung:</strong> ${values.generic["Beschreibung"]}</p>
+      `;
 
+      parentElement.appendChild(editBtn);
+      parentElement.appendChild(createDeleteButton(parentElement));
+    }
+  });
+
+  return editBtn;
+}
+
+// ============================== Quests ==============================
+
+function createNewQuestButton(container) {
+  const type = container.dataset.type || "❖ Neue Quest";
+  let count = parseInt(container.dataset.counter, 10) || 0;
+  container.dataset.counter = ++count;
+
+  const newElement = document.createElement('div');
+  newElement.classList.add('quest', 'field');
+
+  newElement.innerHTML = `
+    <h4>${type} ${count}</h4>
+    <p><strong>Beschreibung:</strong> ...</p>
+    <p><strong>Status:</strong> offen</p>
+    <p><strong>Auftraggeber:</strong> ???</p>
+    <p><strong>Belohnung:</strong></p>
+    <ul class="reward-list">
+      <li>Gold: 0</li>
+      <li>XP: 0</li>
+      <li>Gegenstände: -</li>
+    </ul>
+  `;
+
+  newElement.appendChild(createQuestEditButton(newElement));
+  newElement.appendChild(createDeleteButton(newElement));
+
+  const addButton = container.querySelector('.add-entry-block');
+  container.insertBefore(newElement, addButton);
+}
+
+function createQuestEditButton(parentElement) {
+  const editBtn = document.createElement('button');
+  editBtn.className = 'edit-button';
+  editBtn.textContent = 'Bearbeiten';
+
+  editBtn.addEventListener('click', () => {
+    const isEditing = parentElement.classList.toggle('editing');
+
+    if (isEditing) {
+      editBtn.textContent = 'Speichern';
+      const title = parentElement.querySelector('h4')?.textContent || '';
+      const beschr = parentElement.querySelector('p:nth-of-type(1)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const status = parentElement.querySelector('p:nth-of-type(2)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const auftraggeber = parentElement.querySelector('p:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const belohnungGold = parentElement.querySelector('li:nth-of-type(1)')?.textContent.match(/\d+/)?.[0] || 0;
+      const belohnungXP = parentElement.querySelector('li:nth-of-type(2)')?.textContent.match(/\d+/)?.[0] || 0;
+      const belohnungItems = parentElement.querySelector('li:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
+
+      parentElement.innerHTML = `
+        <label>Titel:</label>
+        <input type="text" class="edit-input" id="quest-titel" value="${title}"><br>
+        <label>Beschreibung:</label>
+        <textarea class="edit-textarea" id="quest-beschreibung">${beschr}</textarea><br>
+        <label>Status:</label>
+        <select id="quest-status" class="edit-input">
+          <option value="offen" ${status === "offen" ? "selected" : ""}>offen</option>
+          <option value="abgeschlossen" ${status === "abgeschlossen" ? "selected" : ""}>abgeschlossen</option>
+        </select><br>
+        <label>Auftraggeber:</label>
+        <input type="text" class="edit-input" id="quest-auftraggeber" value="${auftraggeber}"><br>
+        <label>Belohnung:</label><br>
+        <input type="number" class="edit-input" id="reward-gold" value="${belohnungGold}"> Gold<br>
+        <input type="number" class="edit-input" id="reward-xp" value="${belohnungXP}"> XP<br>
+        <input type="text" class="edit-input" id="reward-items" value="${belohnungItems}" placeholder="Gegenstände (kommagetrennt)"><br>
+      `;
+
+      parentElement.appendChild(editBtn);
+      parentElement.appendChild(createDeleteButton(parentElement));
+    } else {
+      const titel = parentElement.querySelector('#quest-titel')?.value || '';
+      const beschreibung = parentElement.querySelector('#quest-beschreibung')?.value || '';
+      const status = parentElement.querySelector('#quest-status')?.value || 'offen';
+      const auftraggeber = parentElement.querySelector('#quest-auftraggeber')?.value || '';
+      const gold = parentElement.querySelector('#reward-gold')?.value || 0;
+      const xp = parentElement.querySelector('#reward-xp')?.value || 0;
+      const gegenstaende = parentElement.querySelector('#reward-items')?.value || '';
+
+      parentElement.classList.add('quest', 'field');
+      parentElement.innerHTML = `
+        <h4>${titel}</h4>
+        <p><strong>Beschreibung:</strong> ${beschreibung}</p>
+        <p><strong>Status:</strong> ${status}</p>
+        <p><strong>Auftraggeber:</strong> ${auftraggeber}</p>
+        <p><strong>Belohnung:</strong></p>
+        <ul class="reward-list">
+          <li>Gold: ${gold}</li>
+          <li>XP: ${xp}</li>
+          <li>Gegenstände: ${gegenstaende}</li>
+        </ul>
+      `;
+
+      parentElement.appendChild(editBtn);
+      parentElement.appendChild(createDeleteButton(parentElement));
       editBtn.textContent = 'Bearbeiten';
     }
   });
 
   return editBtn;
+}
+
+// ============================== Initialisierung ==============================
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['character-container', 'npc-container', 'quest-container'].forEach(id => {
+    initializeActionButtons(document.getElementById(id));
+  });
+
+  document.getElementById('add-character-btn')?.addEventListener('click', () => {
+    addNewEntry(document.getElementById('character-container'));
+  });
+
+  document.getElementById('add-npc-btn')?.addEventListener('click', () => {
+    addNewEntry(document.getElementById('npc-container'));
+  });
+
+  document.getElementById('add-Quest')?.addEventListener('click', () => {
+    createNewQuestButton(document.getElementById('quest-container'));
+  });
+});
+
+function initializeActionButtons(container) {
+  const entries = container.querySelectorAll('.field');
+  entries.forEach(entry => {
+    if (!entry.querySelector('.delete-button')) {
+      entry.appendChild(createDeleteButton(entry));
+    }
+    if (!entry.querySelector('.edit-button')) {
+      if (entry.classList.contains('quest')) {
+        entry.appendChild(createQuestEditButton(entry));
+      } else {
+        entry.appendChild(createEditButton(entry));
+      }
+    }
+  });
 }
