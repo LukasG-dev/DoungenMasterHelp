@@ -12,7 +12,7 @@ function loadNavbar() {
           document.querySelectorAll('nav a').forEach(link => {
             const page = link.getAttribute('data-page');
             if (page && current.includes(page)) {
-              link.classList.add('active'); // vllt irgend eine andere farbe?
+              link.classList.add('active'); // vllt irgend eine andere Farbe?
             }
           });
         }
