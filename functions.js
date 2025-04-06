@@ -81,6 +81,16 @@ function createEditButton(parentElement) {
     if (isEditing) {
       editBtn.textContent = 'Speichern';
       const replacements = [];
+      // Name separat bearbeiten
+      const h3 = parentElement.querySelector('h3');
+      if (h3) {
+        const nameInput = document.createElement('div');
+        nameInput.innerHTML = `
+          <label>Name:</label>
+          <input type="text" class="edit-name" value="${h3.textContent}">
+        `;
+        replacements.push({ old: h3, new: nameInput });
+      }
 
       parentElement.querySelectorAll('p, ul').forEach(element => {
         const strong = element.querySelector('strong');
