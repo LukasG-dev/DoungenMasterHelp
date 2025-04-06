@@ -21,6 +21,13 @@
       <li class="dropdown">
         <a href="" data-page="Hier vllt verschiedene Karten mit raster zum kalkulieren der Zeit">Karten</a>
       </li>
+      <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
+        <button onclick="saveDataAsJSON()">💾 Speichern</button>
+        <label for="loadJsonInput" style="cursor:pointer;">
+          📂 Laden
+        </label>
+        <input type="file" id="loadJsonInput" accept=".json" style="display:none" onchange="loadDataFromJSON(event)">
+      </div>      
     </ul>
   </nav>
   
