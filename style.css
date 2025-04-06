@@ -13,8 +13,6 @@ body {
   background-position: top center;
   font-family: Arial, sans-serif;
   color: #e0e0d1;
-  font-size: 1.1vw; /* Skaliert mit Fensterbreite */
-  padding: 2vh;      /* Skaliert mit Fensterhöhe */
 }
 
 /* ========== Typografie ========== */
@@ -42,8 +40,6 @@ h2 {
   left: 0;
   right: 0;
   z-index: 1000;
-  font-size: 1.1vw; /* Skaliert mit Fensterbreite */
- 
 }
 
 .navbar ul {
