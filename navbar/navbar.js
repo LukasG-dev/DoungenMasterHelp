@@ -1,6 +1,6 @@
 // navbar laden + active-Klasse setzen
 function loadNavbar() {
-    fetch('DoungenMasterHelp/navbar/navbar.html')
+    fetch('/DoungenMasterHelp/navbar/navbar.html')
       .then(res => res.text())
       .then(data => {
         const placeholder = document.getElementById('navbar-placeholder');
