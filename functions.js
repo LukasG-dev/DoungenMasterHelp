@@ -210,7 +210,6 @@ function createQuestEditButton(parentElement) {
     const isEditing = parentElement.classList.toggle('editing');
 
     if (isEditing) {
-      editBtn.textContent = 'Speichern';
       const title = parentElement.querySelector('h4')?.textContent || '';
       const beschr = parentElement.querySelector('p:nth-of-type(1)')?.textContent.split(':').slice(1).join(':').trim() || '';
       const status = parentElement.querySelector('p:nth-of-type(2)')?.textContent.split(':').slice(1).join(':').trim() || '';
@@ -237,7 +236,7 @@ function createQuestEditButton(parentElement) {
         <input type="text" class="edit-input" id="reward-items" value="${belohnungItems}" placeholder="Gegenstände (kommagetrennt)"><br>
       `;
 
-      parentElement.appendChild(editBtn);
+      parentElement.appendChild(createQuestEditButton(parentElement));
       parentElement.appendChild(createDeleteButton(parentElement));
     } else {
       const titel = parentElement.querySelector('#quest-titel')?.value || '';
@@ -248,7 +247,6 @@ function createQuestEditButton(parentElement) {
       const xp = parentElement.querySelector('#reward-xp')?.value || 0;
       const gegenstaende = parentElement.querySelector('#reward-items')?.value || '';
 
-      parentElement.classList.add('quest', 'field');
       parentElement.innerHTML = `
         <h4>${titel}</h4>
         <p><strong>Beschreibung:</strong> ${beschreibung}</p>
@@ -262,9 +260,8 @@ function createQuestEditButton(parentElement) {
         </ul>
       `;
 
-      parentElement.appendChild(editBtn);
+      parentElement.appendChild(createQuestEditButton(parentElement));
       parentElement.appendChild(createDeleteButton(parentElement));
-      editBtn.textContent = 'Bearbeiten';
     }
   });
 
