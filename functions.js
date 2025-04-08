@@ -182,6 +182,7 @@ function createNewQuestButton(container) {
   newElement.classList.add('quest', 'field');
 
   newElement.innerHTML = `
+  <div class="quest-content">
     <h4>${type} ${count}</h4>
     <p><strong>Beschreibung:</strong> ...</p>
     <p><strong>Status:</strong> offen</p>
@@ -192,7 +193,8 @@ function createNewQuestButton(container) {
       <li>XP: 0</li>
       <li>Gegenstände: -</li>
     </ul>
-  `;
+  </div>
+`;
 
   newElement.appendChild(createQuestEditButton(newElement));
   newElement.appendChild(createDeleteButton(newElement));
@@ -208,46 +210,62 @@ function createQuestEditButton(parentElement) {
 
   editBtn.addEventListener('click', () => {
     const isEditing = parentElement.classList.toggle('editing');
+    let contentDiv = parentElement.querySelector('.quest-content');
+
+    if (!contentDiv) {
+      // fallback falls es beim ersten Öffnen fehlt
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('quest-content');
+      while (parentElement.firstChild && !parentElement.firstChild.classList?.contains('edit-button')) {
+        wrapper.appendChild(parentElement.firstChild);
+      }
+      parentElement.insertBefore(wrapper, editBtn);
+      contentDiv = wrapper;
+    }
 
     if (isEditing) {
-      const title = parentElement.querySelector('h4')?.textContent || '';
-      const beschr = parentElement.querySelector('p:nth-of-type(1)')?.textContent.split(':').slice(1).join(':').trim() || '';
-      const status = parentElement.querySelector('p:nth-of-type(2)')?.textContent.split(':').slice(1).join(':').trim() || '';
-      const auftraggeber = parentElement.querySelector('p:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
-      const belohnungGold = parentElement.querySelector('li:nth-of-type(1)')?.textContent.match(/\d+/)?.[0] || 0;
-      const belohnungXP = parentElement.querySelector('li:nth-of-type(2)')?.textContent.match(/\d+/)?.[0] || 0;
-      const belohnungItems = parentElement.querySelector('li:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      editBtn.textContent = 'Speichern';
 
-      parentElement.innerHTML = `
-        <label>Titel:</label>
-        <input type="text" class="edit-input" id="quest-titel" value="${title}"><br>
-        <label>Beschreibung:</label>
-        <textarea class="edit-textarea" id="quest-beschreibung">${beschr}</textarea><br>
-        <label>Status:</label>
-        <select id="quest-status" class="edit-input">
+      const title = contentDiv.querySelector('h4')?.textContent || '';
+      const beschr = contentDiv.querySelector('p:nth-of-type(1)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const status = contentDiv.querySelector('p:nth-of-type(2)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const auftraggeber = contentDiv.querySelector('p:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const belohnungGold = contentDiv.querySelector('li:nth-of-type(1)')?.textContent.match(/\d+/)?.[0] || 0;
+      const belohnungXP = contentDiv.querySelector('li:nth-of-type(2)')?.textContent.match(/\d+/)?.[0] || 0;
+      const belohnungItems = contentDiv.querySelector('li:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
+
+      contentDiv.innerHTML = `
+        <label>Titel:</label><br>
+        <input type="text" id="quest-titel" value="${title}"><br>
+        <label>Beschreibung:</label><br>
+        <textarea id="quest-beschreibung">${beschr}</textarea><br>
+        <label>Status:</label><br>
+        <select id="quest-status">
           <option value="offen" ${status === "offen" ? "selected" : ""}>offen</option>
           <option value="abgeschlossen" ${status === "abgeschlossen" ? "selected" : ""}>abgeschlossen</option>
         </select><br>
-        <label>Auftraggeber:</label>
-        <input type="text" class="edit-input" id="quest-auftraggeber" value="${auftraggeber}"><br>
-        <label>Belohnung:</label><br>
-        <input type="number" class="edit-input" id="reward-gold" value="${belohnungGold}"> Gold<br>
-        <input type="number" class="edit-input" id="reward-xp" value="${belohnungXP}"> XP<br>
-        <input type="text" class="edit-input" id="reward-items" value="${belohnungItems}" placeholder="Gegenstände (kommagetrennt)"><br>
+        <label>Auftraggeber:</label><br>
+        <input type="text" id="quest-auftraggeber" value="${auftraggeber}"><br>
+        <p><strong>Belohnung:</strong></p>
+        <label>Gold:</label><br>
+        <input type="number" id="reward-gold" value="${belohnungGold}"><br>
+        <label>XP:</label><br>
+        <input type="number" id="reward-xp" value="${belohnungXP}"><br>
+        <label>Gegenstände:</label><br>
+        <textarea id="reward-items">${belohnungItems}</textarea><br>
       `;
-
-      parentElement.appendChild(createQuestEditButton(parentElement));
-      parentElement.appendChild(createDeleteButton(parentElement));
     } else {
-      const titel = parentElement.querySelector('#quest-titel')?.value || '';
-      const beschreibung = parentElement.querySelector('#quest-beschreibung')?.value || '';
-      const status = parentElement.querySelector('#quest-status')?.value || 'offen';
-      const auftraggeber = parentElement.querySelector('#quest-auftraggeber')?.value || '';
-      const gold = parentElement.querySelector('#reward-gold')?.value || 0;
-      const xp = parentElement.querySelector('#reward-xp')?.value || 0;
-      const gegenstaende = parentElement.querySelector('#reward-items')?.value || '';
+      editBtn.textContent = 'Bearbeiten';
 
-      parentElement.innerHTML = `
+      const titel = contentDiv.querySelector('#quest-titel')?.value || '';
+      const beschreibung = contentDiv.querySelector('#quest-beschreibung')?.value || '';
+      const status = contentDiv.querySelector('#quest-status')?.value || 'offen';
+      const auftraggeber = contentDiv.querySelector('#quest-auftraggeber')?.value || '';
+      const gold = contentDiv.querySelector('#reward-gold')?.value || 0;
+      const xp = contentDiv.querySelector('#reward-xp')?.value || 0;
+      const gegenstaende = contentDiv.querySelector('#reward-items')?.value || '';
+
+      contentDiv.innerHTML = `
         <h4>${titel}</h4>
         <p><strong>Beschreibung:</strong> ${beschreibung}</p>
         <p><strong>Status:</strong> ${status}</p>
@@ -259,14 +277,12 @@ function createQuestEditButton(parentElement) {
           <li>Gegenstände: ${gegenstaende}</li>
         </ul>
       `;
-
-      parentElement.appendChild(createQuestEditButton(parentElement));
-      parentElement.appendChild(createDeleteButton(parentElement));
     }
   });
 
   return editBtn;
 }
+
 
 // ============================== Initialisierung ==============================
 
