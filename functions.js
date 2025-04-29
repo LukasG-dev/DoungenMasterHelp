@@ -3,10 +3,10 @@
 // ============================== Basisfunktionen ==============================
 
 function createDeleteButton(parentElement) {
-  const deleteBtn = document.createElement('button');
-  deleteBtn.className = 'delete-button';
-  deleteBtn.textContent = '-';
-  deleteBtn.addEventListener('click', () => parentElement.remove());
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-button";
+  deleteBtn.textContent = "-";
+  deleteBtn.addEventListener("click", () => parentElement.remove());
   return deleteBtn;
 }
 
@@ -21,8 +21,8 @@ function addNewEntry(container) {
   let count = parseInt(container.dataset.counter, 10) || 0;
   container.dataset.counter = ++count;
 
-  const newElement = document.createElement('div');
-  newElement.classList.add('character', 'field');
+  const newElement = document.createElement("div");
+  newElement.classList.add("character", "field");
 
   const charakter = {
     name: `${type} ${count}`,
@@ -38,9 +38,9 @@ function addNewEntry(container) {
       konstitution: 11,
       intelligenz: 8,
       weisheit: 9,
-      charisma: 13
+      charisma: 13,
     },
-    beschreibung: `Beschreibung zu ${type} ${count}`
+    beschreibung: `Beschreibung zu ${type} ${count}`,
   };
 
   newElement.innerHTML = `
@@ -66,25 +66,25 @@ function addNewEntry(container) {
   newElement.appendChild(createEditButton(newElement));
   newElement.appendChild(createDeleteButton(newElement));
 
-  const addButton = container.querySelector('.add-entry-block');
+  const addButton = container.querySelector(".add-entry-block");
   container.insertBefore(newElement, addButton);
 }
 
 function createEditButton(parentElement) {
-  const editBtn = document.createElement('button');
-  editBtn.className = 'edit-button';
-  editBtn.textContent = 'Bearbeiten';
+  const editBtn = document.createElement("button");
+  editBtn.className = "edit-button";
+  editBtn.textContent = "Bearbeiten";
 
-  editBtn.addEventListener('click', () => {
-    const isEditing = parentElement.classList.toggle('editing');
+  editBtn.addEventListener("click", () => {
+    const isEditing = parentElement.classList.toggle("editing");
 
     if (isEditing) {
-      editBtn.textContent = 'Speichern';
+      editBtn.textContent = "Speichern";
       const replacements = [];
       // Name separat bearbeiten
-      const h3 = parentElement.querySelector('h3');
+      const h3 = parentElement.querySelector("h3");
       if (h3) {
-        const nameInput = document.createElement('div');
+        const nameInput = document.createElement("div");
         nameInput.innerHTML = `
           <label>Name:</label>
           <input type="text" class="edit-name" value="${h3.textContent}">
@@ -92,37 +92,42 @@ function createEditButton(parentElement) {
         replacements.push({ old: h3, new: nameInput });
       }
 
-      parentElement.querySelectorAll('p, ul').forEach(element => {
-        const strong = element.querySelector('strong');
-        const label = strong ? strong.textContent.replace(':', '').trim() : '';
+      parentElement.querySelectorAll("p, ul").forEach((element) => {
+        const strong = element.querySelector("strong");
+        const label = strong ? strong.textContent.replace(":", "").trim() : "";
         let newEl;
 
         if (label === "HP") {
           const [aktuell, max] = element.textContent.match(/\d+/g) || [0, 0];
-          newEl = document.createElement('div');
+          newEl = document.createElement("div");
           newEl.innerHTML = `
             <label>HP:</label>
             <input type="number" class="edit-hp-aktuell" value="${aktuell}" style="width: 60px;"> /
             <input type="number" class="edit-hp-max" value="${max}" style="width: 60px;">
           `;
-        }
-        else if (label === "Attribute" || element.classList.contains("attribute-list")) {
-          const attrInputs = document.createElement('div');
-          element.querySelectorAll('li').forEach(li => {
-            const [attr, val] = li.textContent.split(':').map(s => s.trim());
+        } else if (
+          label === "Attribute" ||
+          element.classList.contains("attribute-list")
+        ) {
+          const attrInputs = document.createElement("div");
+          element.querySelectorAll("li").forEach((li) => {
+            const [attr, val] = li.textContent.split(":").map((s) => s.trim());
             attrInputs.innerHTML += `
               <label>${attr}:</label>
               <input type="number" class="edit-attr" data-attr="${attr.toLowerCase()}" value="${val}" style="width: 60px;"><br>
             `;
           });
           newEl = attrInputs;
-        }
-        else if (label) {
-          const value = element.textContent.replace(strong.textContent, '').trim();
-          newEl = document.createElement('div');
+        } else if (label) {
+          const value = element.textContent
+            .replace(strong.textContent, "")
+            .trim();
+          newEl = document.createElement("div");
           newEl.innerHTML = `
             <label>${label}:</label>
-            <input type="${isNaN(value) ? 'text' : 'number'}" class="edit-generic" data-label="${label}" value="${value}">
+            <input type="${
+              isNaN(value) ? "text" : "number"
+            }" class="edit-generic" data-label="${label}" value="${value}">
           `;
         }
 
@@ -130,25 +135,27 @@ function createEditButton(parentElement) {
       });
 
       replacements.forEach(({ old, new: newEl }) => old.replaceWith(newEl));
-
     } else {
-      editBtn.textContent = 'Bearbeiten';
+      editBtn.textContent = "Bearbeiten";
       const values = { generic: {}, attribute: {}, hp: {} };
 
-      values.generic["Name"] = parentElement.querySelector('h3')?.textContent || "Unbenannt";
-      parentElement.querySelectorAll('input.edit-generic').forEach(input => {
+      const nameInput = parentElement.querySelector("input.edit-name");
+      values.generic["Name"] = nameInput?.value.trim() || "Unbenannt";
+      parentElement.querySelectorAll("input.edit-generic").forEach((input) => {
         const label = input.dataset.label?.trim();
         if (label) values.generic[label] = input.value;
       });
-      parentElement.querySelectorAll('input.edit-attr').forEach(input => {
+      parentElement.querySelectorAll("input.edit-attr").forEach((input) => {
         const attr = input.dataset.attr;
         values.attribute[attr] = input.value;
       });
-      values.hp.aktuell = parentElement.querySelector('.edit-hp-aktuell')?.value || 0;
-      values.hp.max = parentElement.querySelector('.edit-hp-max')?.value || 0;
+      values.hp.aktuell =
+        parentElement.querySelector(".edit-hp-aktuell")?.value || 0;
+      values.hp.max = parentElement.querySelector(".edit-hp-max")?.value || 0;
 
       const attrList = Object.entries(values.attribute)
-        .map(([key, val]) => `<li>${capitalize(key)}: ${val}</li>`).join("");
+        .map(([key, val]) => `<li>${capitalize(key)}: ${val}</li>`)
+        .join("");
 
       parentElement.innerHTML = `
         <h3>${values.generic["Name"]}</h3>
@@ -178,8 +185,8 @@ function createNewQuestButton(container) {
   let count = parseInt(container.dataset.counter, 10) || 0;
   container.dataset.counter = ++count;
 
-  const newElement = document.createElement('div');
-  newElement.classList.add('quest', 'field');
+  const newElement = document.createElement("div");
+  newElement.classList.add("quest", "field");
 
   newElement.innerHTML = `
   <div class="quest-content">
@@ -199,24 +206,27 @@ function createNewQuestButton(container) {
   newElement.appendChild(createQuestEditButton(newElement));
   newElement.appendChild(createDeleteButton(newElement));
 
-  const addButton = container.querySelector('.add-entry-block');
+  const addButton = container.querySelector(".add-entry-block");
   container.insertBefore(newElement, addButton);
 }
 
 function createQuestEditButton(parentElement) {
-  const editBtn = document.createElement('button');
-  editBtn.className = 'edit-button';
-  editBtn.textContent = 'Bearbeiten';
+  const editBtn = document.createElement("button");
+  editBtn.className = "edit-button";
+  editBtn.textContent = "Bearbeiten";
 
-  editBtn.addEventListener('click', () => {
-    const isEditing = parentElement.classList.toggle('editing');
-    let contentDiv = parentElement.querySelector('.quest-content');
+  editBtn.addEventListener("click", () => {
+    const isEditing = parentElement.classList.toggle("editing");
+    let contentDiv = parentElement.querySelector(".quest-content");
 
     if (!contentDiv) {
       // fallback falls es beim ersten Öffnen fehlt
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('quest-content');
-      while (parentElement.firstChild && !parentElement.firstChild.classList?.contains('edit-button')) {
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("quest-content");
+      while (
+        parentElement.firstChild &&
+        !parentElement.firstChild.classList?.contains("edit-button")
+      ) {
         wrapper.appendChild(parentElement.firstChild);
       }
       parentElement.insertBefore(wrapper, editBtn);
@@ -224,15 +234,45 @@ function createQuestEditButton(parentElement) {
     }
 
     if (isEditing) {
-      editBtn.textContent = 'Speichern';
+      editBtn.textContent = "Speichern";
 
-      const title = contentDiv.querySelector('h4')?.textContent || '';
-      const beschr = contentDiv.querySelector('p:nth-of-type(1)')?.textContent.split(':').slice(1).join(':').trim() || '';
-      const status = contentDiv.querySelector('p:nth-of-type(2)')?.textContent.split(':').slice(1).join(':').trim() || '';
-      const auftraggeber = contentDiv.querySelector('p:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
-      const belohnungGold = contentDiv.querySelector('li:nth-of-type(1)')?.textContent.match(/\d+/)?.[0] || 0;
-      const belohnungXP = contentDiv.querySelector('li:nth-of-type(2)')?.textContent.match(/\d+/)?.[0] || 0;
-      const belohnungItems = contentDiv.querySelector('li:nth-of-type(3)')?.textContent.split(':').slice(1).join(':').trim() || '';
+      const title = contentDiv.querySelector("h4")?.textContent || "";
+      const beschr =
+        contentDiv
+          .querySelector("p:nth-of-type(1)")
+          ?.textContent.split(":")
+          .slice(1)
+          .join(":")
+          .trim() || "";
+      const status =
+        contentDiv
+          .querySelector("p:nth-of-type(2)")
+          ?.textContent.split(":")
+          .slice(1)
+          .join(":")
+          .trim() || "";
+      const auftraggeber =
+        contentDiv
+          .querySelector("p:nth-of-type(3)")
+          ?.textContent.split(":")
+          .slice(1)
+          .join(":")
+          .trim() || "";
+      const belohnungGold =
+        contentDiv
+          .querySelector("li:nth-of-type(1)")
+          ?.textContent.match(/\d+/)?.[0] || 0;
+      const belohnungXP =
+        contentDiv
+          .querySelector("li:nth-of-type(2)")
+          ?.textContent.match(/\d+/)?.[0] || 0;
+      const belohnungItems =
+        contentDiv
+          .querySelector("li:nth-of-type(3)")
+          ?.textContent.split(":")
+          .slice(1)
+          .join(":")
+          .trim() || "";
 
       contentDiv.innerHTML = `
         <label>Titel:</label><br>
@@ -241,8 +281,12 @@ function createQuestEditButton(parentElement) {
         <textarea id="quest-beschreibung">${beschr}</textarea><br>
         <label>Status:</label><br>
         <select id="quest-status">
-          <option value="offen" ${status === "offen" ? "selected" : ""}>offen</option>
-          <option value="abgeschlossen" ${status === "abgeschlossen" ? "selected" : ""}>abgeschlossen</option>
+          <option value="offen" ${
+            status === "offen" ? "selected" : ""
+          }>offen</option>
+          <option value="abgeschlossen" ${
+            status === "abgeschlossen" ? "selected" : ""
+          }>abgeschlossen</option>
         </select><br>
         <label>Auftraggeber:</label><br>
         <input type="text" id="quest-auftraggeber" value="${auftraggeber}"><br>
@@ -255,15 +299,19 @@ function createQuestEditButton(parentElement) {
         <textarea id="reward-items">${belohnungItems}</textarea><br>
       `;
     } else {
-      editBtn.textContent = 'Bearbeiten';
+      editBtn.textContent = "Bearbeiten";
 
-      const titel = contentDiv.querySelector('#quest-titel')?.value || '';
-      const beschreibung = contentDiv.querySelector('#quest-beschreibung')?.value || '';
-      const status = contentDiv.querySelector('#quest-status')?.value || 'offen';
-      const auftraggeber = contentDiv.querySelector('#quest-auftraggeber')?.value || '';
-      const gold = contentDiv.querySelector('#reward-gold')?.value || 0;
-      const xp = contentDiv.querySelector('#reward-xp')?.value || 0;
-      const gegenstaende = contentDiv.querySelector('#reward-items')?.value || '';
+      const titel = contentDiv.querySelector("#quest-titel")?.value || "";
+      const beschreibung =
+        contentDiv.querySelector("#quest-beschreibung")?.value || "";
+      const status =
+        contentDiv.querySelector("#quest-status")?.value || "offen";
+      const auftraggeber =
+        contentDiv.querySelector("#quest-auftraggeber")?.value || "";
+      const gold = contentDiv.querySelector("#reward-gold")?.value || 0;
+      const xp = contentDiv.querySelector("#reward-xp")?.value || 0;
+      const gegenstaende =
+        contentDiv.querySelector("#reward-items")?.value || "";
 
       contentDiv.innerHTML = `
         <h4>${titel}</h4>
@@ -283,35 +331,36 @@ function createQuestEditButton(parentElement) {
   return editBtn;
 }
 
-
 // ============================== Initialisierung ==============================
 
-document.addEventListener('DOMContentLoaded', () => {
-  ['character-container', 'npc-container', 'quest-container'].forEach(id => {
+document.addEventListener("DOMContentLoaded", () => {
+  ["character-container", "npc-container", "quest-container"].forEach((id) => {
     initializeActionButtons(document.getElementById(id));
   });
 
-  document.getElementById('add-character-btn')?.addEventListener('click', () => {
-    addNewEntry(document.getElementById('character-container'));
+  document
+    .getElementById("add-character-btn")
+    ?.addEventListener("click", () => {
+      addNewEntry(document.getElementById("character-container"));
+    });
+
+  document.getElementById("add-npc-btn")?.addEventListener("click", () => {
+    addNewEntry(document.getElementById("npc-container"));
   });
 
-  document.getElementById('add-npc-btn')?.addEventListener('click', () => {
-    addNewEntry(document.getElementById('npc-container'));
-  });
-
-  document.getElementById('add-Quest')?.addEventListener('click', () => {
-    createNewQuestButton(document.getElementById('quest-container'));
+  document.getElementById("add-Quest")?.addEventListener("click", () => {
+    createNewQuestButton(document.getElementById("quest-container"));
   });
 });
 
 function initializeActionButtons(container) {
-  const entries = container.querySelectorAll('.field');
-  entries.forEach(entry => {
-    if (!entry.querySelector('.delete-button')) {
+  const entries = container.querySelectorAll(".field");
+  entries.forEach((entry) => {
+    if (!entry.querySelector(".delete-button")) {
       entry.appendChild(createDeleteButton(entry));
     }
-    if (!entry.querySelector('.edit-button')) {
-      if (entry.classList.contains('quest')) {
+    if (!entry.querySelector(".edit-button")) {
+      if (entry.classList.contains("quest")) {
         entry.appendChild(createQuestEditButton(entry));
       } else {
         entry.appendChild(createEditButton(entry));

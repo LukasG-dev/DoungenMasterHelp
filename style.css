@@ -1,5 +1,6 @@
 /* ========== Basislayout & Hintergrund ========== */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -7,7 +8,7 @@ html, body {
 }
 
 body {
-  background-image: url('images/BlackDragon.png');
+  background-image: url("images/BlackDragon.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top center;
@@ -16,7 +17,9 @@ body {
 }
 
 /* ========== Typografie ========== */
-h2, h3, h4 {
+h2,
+h3,
+h4 {
   margin: 0 0 10px 0;
 }
 
@@ -83,7 +86,7 @@ h2 {
   background-color: rgba(0, 0, 0, 0.8);
   min-width: 200px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
@@ -102,7 +105,6 @@ h2 {
 .dropdown:hover .dropdown-content {
   display: block;
 }
-
 
 /* ========== Charakter- & NPC-Container ========== */
 #character-container,
